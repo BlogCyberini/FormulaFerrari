@@ -29,76 +29,93 @@ public class Ferrari {
         double B = c / a;
         double C = d / a;
         double D = e / a;
-        
-        //lista com os resultados
-        List<String> results = new LinkedList<String>();       
-        
-        if(A == 0 && C == 0){
-            //equação biquadrática: resolve com a substituição y = x^2
-            double delta = B * B - 4 * D;
-            if (delta >= 0) {
-                //x1 e x2
-                double aux1 = (-B + Math.sqrt(delta)) / 2;
-                if (aux1 >= 0) {
-                    results.add(String.valueOf(Math.sqrt(aux1)));
-                    results.add(String.valueOf(-Math.sqrt(aux1)));
-                } else {
-                    results.add(formatComplex(0, Math.sqrt(Math.abs(aux1))));
-                    results.add(formatComplex(0, -Math.sqrt(Math.abs(aux1))));
-                }
-                //x3 e x4
-                double aux2 = (-B - Math.sqrt(delta)) / 2;
-                if (aux2 >= 0) {
-                    results.add(String.valueOf(Math.sqrt(aux2)));
-                    results.add(String.valueOf(-Math.sqrt(aux2)));
-                } else {
-                    results.add(formatComplex(0, Math.sqrt(Math.abs(aux2))));
-                    results.add(formatComplex(0, -Math.sqrt(Math.abs(aux2))));
-                }
-            } else {
-                //quando delta < 0, então é necessário lidar com números complexos
-                double rho = Math.sqrt(D);
-                double theta = Math.atan2(Math.sqrt(Math.abs(delta))/2, -B / 2);
 
-                double reAux = Math.sqrt(rho) * Math.cos(theta / 2);
-                double imAux = Math.sqrt(rho) * Math.sin(theta / 2);
-                
-                results.add(formatComplex(reAux, imAux));
-                results.add(formatComplex(reAux, -imAux));
-                results.add(formatComplex(-reAux, imAux));
-                results.add(formatComplex(-reAux, -imAux));
-            }            
-        } else {
-            //Fórmula de Ferrari            
-            //coeficientes da equação reduzida
-            double p = B - 3 * A * A / 8;
-            double q = A * A * A / 8 - A * B / 2 + C;
-            double r = -3 * A * A * A * A / 256 + A * A * B / 16 - A * C / 4 + D;
-            
-            //raiz da equação auxiliar
-            double u = cardanoRealPositive(1, 2 * p, p * p - 4 * r, -q * q);
-            
-            //discriminantes
-            double delta1 = -u - 2 * p - 2 * q / Math.sqrt(u);
-            double delta2 = -u - 2 * p + 2 * q / Math.sqrt(u);
-            
-            //adiciona as raízes à lista de resultados
-            if(delta1 >= 0){
-                results.add(String.valueOf(-A / 4 + Math.sqrt(u) / 2 + Math.sqrt(delta1) / 2));
-                results.add(String.valueOf(-A / 4 + Math.sqrt(u) / 2 - Math.sqrt(delta1) / 2));
-            }else{
-                results.add(formatComplex(-A / 4 + Math.sqrt(u) / 2, Math.sqrt(Math.abs(delta1)) / 2));
-                results.add(formatComplex(-A / 4 + Math.sqrt(u) / 2, -Math.sqrt(Math.abs(delta1)) / 2));
-            }
-            if(delta2 >= 0){
-                results.add(String.valueOf(-A / 4 - Math.sqrt(u) / 2 + Math.sqrt(delta2) / 2));
-                results.add(String.valueOf(-A / 4 - Math.sqrt(u) / 2 - Math.sqrt(delta2) / 2));
-            }else{
-                results.add(formatComplex(-A / 4 - Math.sqrt(u) / 2, Math.sqrt(Math.abs(delta2)) / 2));
-                results.add(formatComplex(-A / 4 - Math.sqrt(u) / 2, -Math.sqrt(Math.abs(delta2)) / 2));
-            }
+        //lista com os resultados
+        List<String> results = new LinkedList<String>();
+
+        //Fórmula de Ferrari            
+        //coeficientes da equação reduzida
+        double p = B - 3 * A * A / 8;
+        double q = A * A * A / 8 - A * B / 2 + C;
+        double r = -3 * A * A * A * A / 256 + A * A * B / 16 - A * C / 4 + D;
+        
+        if(q == 0){
+            //a equação é biquadrática: y^4+py^2+r = 0
+            //o valor A/4 será subtraído da equação
+            return biquad(p, r, A / 4);
         }
-        return results;        
+        
+        //raiz da equação auxiliar
+        double u = cardanoRealPositive(1, 2 * p, p * p - 4 * r, -q * q);
+
+        //discriminantes
+        double delta1 = -u - 2 * p - 2 * q / Math.sqrt(u);
+        double delta2 = -u - 2 * p + 2 * q / Math.sqrt(u);
+
+        //adiciona as raízes à lista de resultados
+        if (delta1 >= 0) {
+            results.add(String.valueOf(-A / 4 + Math.sqrt(u) / 2 + Math.sqrt(delta1) / 2));
+            results.add(String.valueOf(-A / 4 + Math.sqrt(u) / 2 - Math.sqrt(delta1) / 2));
+        } else {
+            results.add(formatComplex(-A / 4 + Math.sqrt(u) / 2, Math.sqrt(Math.abs(delta1)) / 2));
+            results.add(formatComplex(-A / 4 + Math.sqrt(u) / 2, -Math.sqrt(Math.abs(delta1)) / 2));
+        }
+        if (delta2 >= 0) {
+            results.add(String.valueOf(-A / 4 - Math.sqrt(u) / 2 + Math.sqrt(delta2) / 2));
+            results.add(String.valueOf(-A / 4 - Math.sqrt(u) / 2 - Math.sqrt(delta2) / 2));
+        } else {
+            results.add(formatComplex(-A / 4 - Math.sqrt(u) / 2, Math.sqrt(Math.abs(delta2)) / 2));
+            results.add(formatComplex(-A / 4 - Math.sqrt(u) / 2, -Math.sqrt(Math.abs(delta2)) / 2));
+        }
+        return results;
+    }
+    
+    /**
+     * Resolve uma equação biquadrática da forma x^4 + Bx^2 + D = 0.
+     * Subtrai o valor subtract das soluções.
+     * 
+     * @param B coeficiente do termo quadrático
+     * @param D coeficiente do termo independente
+     * @param subtract valor que será subtraído das raízes
+     * @return raízes da equação menos o valor subtract
+     */
+    private static List<String> biquad(double B, double D, double subtract) {
+        //equação biquadrática: resolve com a substituição y = x^2
+        List<String> results = new LinkedList<String>();        
+        double delta = B * B - 4 * D;
+        if (delta >= 0) {
+            //x1 e x2
+            double aux1 = (-B + Math.sqrt(delta)) / 2;
+            if (aux1 >= 0) {
+                results.add(String.valueOf(Math.sqrt(aux1) - subtract));
+                results.add(String.valueOf(-Math.sqrt(aux1) - subtract));
+            } else {
+                results.add(formatComplex(-subtract, Math.sqrt(Math.abs(aux1))));
+                results.add(formatComplex(-subtract, -Math.sqrt(Math.abs(aux1))));
+            }
+            //x3 e x4
+            double aux2 = (-B - Math.sqrt(delta)) / 2;
+            if (aux2 >= 0) {
+                results.add(String.valueOf(Math.sqrt(aux2) - subtract));
+                results.add(String.valueOf(-Math.sqrt(aux2) - subtract));
+            } else {
+                results.add(formatComplex(-subtract, Math.sqrt(Math.abs(aux2))));
+                results.add(formatComplex(-subtract, -Math.sqrt(Math.abs(aux2))));
+            }
+        } else {
+            //quando delta < 0, então é necessário lidar com números complexos
+            double rho = Math.sqrt(D);
+            double theta = Math.atan2(Math.sqrt(Math.abs(delta)) / 2, -B / 2);
+
+            double reAux = Math.sqrt(rho) * Math.cos(theta / 2);
+            double imAux = Math.sqrt(rho) * Math.sin(theta / 2);
+
+            results.add(formatComplex(reAux - subtract, imAux));
+            results.add(formatComplex(reAux - subtract, -imAux));
+            results.add(formatComplex(-reAux - subtract, imAux));
+            results.add(formatComplex(-reAux - subtract, -imAux));
+        }
+        return results;
     }
     
     /**
@@ -152,7 +169,7 @@ public class Ferrari {
                 }
             }
             
-        } else {            
+        } else {
             double rho = Math.sqrt(q * q / 4.0 + Math.abs(delta));
             double theta = Math.acos(-q / (2.0 * rho));
             x = 2.0 * Math.cbrt(rho) * Math.cos(theta / 3.0) - A / 3.0;
@@ -166,7 +183,7 @@ public class Ferrari {
                     return 2.0 * Math.cbrt(rho) * Math.cos((theta + 4.0 * Math.PI) / 3.0) - A / 3.0;
                 }
             }
-        }        
+        }
     }
 
     /**
@@ -246,6 +263,12 @@ public class Ferrari {
         
         System.out.println("\nCoeficientes: 1,0,-5,0,4");
         roots = ferrari(1,0,-5,0,4);
+        for(int i = 0; i < roots.size(); i++){
+            System.out.println("y"+(i+1)+"="+roots.get(i));
+        }
+        
+        System.out.println("\nCoeficientes: 1,2,2,1,1");
+        roots = ferrari(1,2,2,1,1);
         for(int i = 0; i < roots.size(); i++){
             System.out.println("y"+(i+1)+"="+roots.get(i));
         }
