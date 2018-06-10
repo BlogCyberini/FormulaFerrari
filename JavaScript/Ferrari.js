@@ -25,8 +25,8 @@ function ferrari(a, b, c, d, e) {
             //x1 e x2
             var aux1 = (-B + Math.sqrt(delta)) / 2;
             if (aux1 >= 0) {
-                results.push(toString(Math.sqrt(aux1)));
-                results.push(toString(-Math.sqrt(aux1)));
+                results.push((Math.sqrt(aux1).toString()));
+                results.push((-Math.sqrt(aux1).toString()));
             } else {
                 results.push(formatComplex(0, Math.sqrt(Math.abs(aux1))));
                 results.push(formatComplex(0, -Math.sqrt(Math.abs(aux1))));
@@ -34,8 +34,8 @@ function ferrari(a, b, c, d, e) {
             //x3 e x4
             var aux2 = (-B - Math.sqrt(delta)) / 2;
             if (aux2 >= 0) {
-                results.push(toString(Math.sqrt(aux2)));
-                results.push(toString(-Math.sqrt(aux2)));
+                results.push((Math.sqrt(aux2).toString()));
+                results.push((-Math.sqrt(aux2).toString()));
             } else {
                 results.push(formatComplex(0, Math.sqrt(Math.abs(aux2))));
                 results.push(formatComplex(0, -Math.sqrt(Math.abs(aux2))));
@@ -70,15 +70,15 @@ function ferrari(a, b, c, d, e) {
 
         //adiciona as raízes à lista de resultados
         if (delta1 >= 0) {
-            results.push(toString(-A / 4 + Math.sqrt(u) / 2 + Math.sqrt(delta1) / 2));
-            results.push(toString(-A / 4 + Math.sqrt(u) / 2 - Math.sqrt(delta1) / 2));
+            results.push((-A / 4 + Math.sqrt(u) / 2 + Math.sqrt(delta1) / 2).toString());
+            results.push((-A / 4 + Math.sqrt(u) / 2 - Math.sqrt(delta1) / 2).toString());
         } else {
             results.push(formatComplex(-A / 4 + Math.sqrt(u) / 2, Math.sqrt(Math.abs(delta1)) / 2));
             results.push(formatComplex(-A / 4 + Math.sqrt(u) / 2, -Math.sqrt(Math.abs(delta1)) / 2));
         }
         if (delta2 >= 0) {
-            results.push(toString(-A / 4 - Math.sqrt(u) / 2 + Math.sqrt(delta2) / 2));
-            results.push(toString(-A / 4 - Math.sqrt(u) / 2 - Math.sqrt(delta2) / 2));
+            results.push((-A / 4 - Math.sqrt(u) / 2 + Math.sqrt(delta2) / 2).toString());
+            results.push((-A / 4 - Math.sqrt(u) / 2 - Math.sqrt(delta2) / 2).toString());
         } else {
             results.push(formatComplex(-A / 4 - Math.sqrt(u) / 2, Math.sqrt(Math.abs(delta2)) / 2));
             results.push(formatComplex(-A / 4 - Math.sqrt(u) / 2, -Math.sqrt(Math.abs(delta2)) / 2));
@@ -148,7 +148,7 @@ function cardanoRealPositive(a, b, c, d){
 }
 
 //Formata o número complexo na forma "a + bi"
-function formatComplexResult(realPart, imPart){    
+function formatComplex(realPart, imPart){    
     if(realPart == 0 && imPart == 0) return "0";
     
     var number = "";
