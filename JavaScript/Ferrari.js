@@ -6,21 +6,6 @@ Resolve uma equação do quarto grau com coeficientes reais e retorna uma lista 
 Se a equação for biquadrática, resolve via substituição y = x^2. Senão, resolve via fórmula de Ferrari
 */
 function ferrari(a, b, c, d, e) {
-    if (!(a instanceof Number)) {
-        throw "a não é um número";
-    }
-    if (!(b instanceof Number)) {
-        throw "b não é um número";
-    }
-    if (!(c instanceof Number)) {
-        throw "c não é um número";
-    }
-    if (!(d instanceof Number)) {
-        throw "d não é um número";
-    }
-    if (!(e instanceof Number)) {
-        throw "e não é um número";
-    }
     if (a == 0) {
         throw "a == 0";
     }
@@ -107,21 +92,6 @@ Tenta retornar a primeira raiz real positiva da equação do terceiro grau passa
 Se não for possível, retorna uma raiz real qualquer.
 */
 function cardanoRealPositive(a, b, c, d){
-    /*
-     * Valida os coeficientes
-     */
-    if(!(a instanceof Number)){
-        throw "a não é um número";
-    }
-    if(!(b instanceof Number)){
-        throw "b não é um número";
-    }
-    if(!(c instanceof Number)){
-        throw "c não é um número";
-    }
-    if(!(d instanceof Number)){
-        throw "d não é um número";
-    }
     if(a == 0){
         throw "a == 0";
     }
@@ -178,11 +148,7 @@ function cardanoRealPositive(a, b, c, d){
 }
 
 //Formata o número complexo na forma "a + bi"
-function formatComplexResult(realPart, imPart){
-    //Validações
-    if(!(realPart instanceof Number)){throw "realPart must be a Number!";}
-    if(!(imPart instanceof Number)){throw "imPart must be a Number!";}
-    
+function formatComplexResult(realPart, imPart){    
     if(realPart == 0 && imPart == 0) return "0";
     
     var number = "";
