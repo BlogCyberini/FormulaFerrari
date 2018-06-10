@@ -18,73 +18,84 @@ function ferrari(a, b, c, d, e) {
     //lista de resultados
     var results = [];
 
-    if (A == 0 && C == 0) {
-        //equação biquadrática: resolve com a substituição y = x^2
-        var delta = B * B - 4 * D;
-        if (delta >= 0) {
-            //x1 e x2
-            var aux1 = (-B + Math.sqrt(delta)) / 2;
-            if (aux1 >= 0) {
-                results.push((Math.sqrt(aux1).toString()));
-                results.push((-Math.sqrt(aux1).toString()));
-            } else {
-                results.push(formatComplex(0, Math.sqrt(Math.abs(aux1))));
-                results.push(formatComplex(0, -Math.sqrt(Math.abs(aux1))));
-            }
-            //x3 e x4
-            var aux2 = (-B - Math.sqrt(delta)) / 2;
-            if (aux2 >= 0) {
-                results.push((Math.sqrt(aux2).toString()));
-                results.push((-Math.sqrt(aux2).toString()));
-            } else {
-                results.push(formatComplex(0, Math.sqrt(Math.abs(aux2))));
-                results.push(formatComplex(0, -Math.sqrt(Math.abs(aux2))));
-            }
+    //Fórmula de Ferrari
+    //coeficientes da equação reduzida
+    var p = B - 3 * A * A / 8;
+    var q = A * A * A / 8 - A * B / 2 + C;
+    var r = -3 * A * A * A * A / 256 + A * A * B / 16 - A * C / 4 + D;
+    
+    if(q == 0){
+        //a equação é biquadrática: y^4+py^2+r = 0
+        //o valor A/4 será subtraído da equação
+        return biquad(p, r, A/4);
+    }
+
+    //raiz da equação auxiliar
+    var u = cardanoRealPositive(1, 2 * p, p * p - 4 * r, -q * q);
+
+    //discriminantes
+    var delta1 = -u - 2 * p - 2 * q / Math.sqrt(u);
+    var delta2 = -u - 2 * p + 2 * q / Math.sqrt(u);
+
+    //adiciona as raízes à lista de resultados
+    if (delta1 >= 0) {
+        results.push((-A / 4 + Math.sqrt(u) / 2 + Math.sqrt(delta1) / 2).toString());
+        results.push((-A / 4 + Math.sqrt(u) / 2 - Math.sqrt(delta1) / 2).toString());
+    } else {
+        results.push(formatComplex(-A / 4 + Math.sqrt(u) / 2, Math.sqrt(Math.abs(delta1)) / 2));
+        results.push(formatComplex(-A / 4 + Math.sqrt(u) / 2, -Math.sqrt(Math.abs(delta1)) / 2));
+    }
+    if (delta2 >= 0) {
+        results.push((-A / 4 - Math.sqrt(u) / 2 + Math.sqrt(delta2) / 2).toString());
+        results.push((-A / 4 - Math.sqrt(u) / 2 - Math.sqrt(delta2) / 2).toString());
+    } else {
+        results.push(formatComplex(-A / 4 - Math.sqrt(u) / 2, Math.sqrt(Math.abs(delta2)) / 2));
+        results.push(formatComplex(-A / 4 - Math.sqrt(u) / 2, -Math.sqrt(Math.abs(delta2)) / 2));
+    }
+    return results;
+}
+
+/*
+Resolve uma equação biquadrática da forma x^4 + Bx^2 + D = 0.
+Subtrai o valor subtract das soluções.
+*/
+function biquad(B, D, subtract) {
+    //equação biquadrática: resolve com a substituição y = x^2
+    var results = [];
+    var delta = B * B - 4 * D;
+    if (delta >= 0) {
+        //x1 e x2
+        var aux1 = (-B + Math.sqrt(delta)) / 2;
+        if (aux1 >= 0) {
+            results.push((Math.sqrt(aux1) - subtract).toString());
+            results.push((-Math.sqrt(aux1) - subtract).toString());
         } else {
-            //quando delta < 0, então é necessário lidar com números complexos                
-            var rho = Math.sqrt(D);
-            var theta = Math.atan2(Math.sqrt(Math.abs(delta)) / 2, -B / 2);
-
-            var reAux = Math.sqrt(rho) * Math.cos(theta / 2);
-            var imAux = Math.sqrt(rho) * Math.sin(theta / 2);
-
-            results.push(formatComplex(reAux, imAux));
-            results.push(formatComplex(reAux, -imAux));
-            results.push(formatComplex(-reAux, imAux));
-            results.push(formatComplex(-reAux, -imAux));
+            results.push(formatComplex(-subtract, Math.sqrt(Math.abs(aux1))));
+            results.push(formatComplex(-subtract, -Math.sqrt(Math.abs(aux1))));
+        }
+        //x3 e x4
+        var aux2 = (-B - Math.sqrt(delta)) / 2;
+        if (aux2 >= 0) {
+            results.push((Math.sqrt(aux2) - subtract).toString());
+            results.push((-Math.sqrt(aux2) - subtract).toString());
+        } else {
+            results.push(formatComplex(-subtract, Math.sqrt(Math.abs(aux2))));
+            results.push(formatComplex(-subtract, -Math.sqrt(Math.abs(aux2))));
         }
     } else {
-        //Fórmula de Ferrari
+        //quando delta < 0, então é necessário lidar com números complexos                
+        var rho = Math.sqrt(D);
+        var theta = Math.atan2(Math.sqrt(Math.abs(delta)) / 2, -B / 2);
 
-        //coeficientes da equação reduzida
-        var p = B - 3 * A * A / 8;
-        var q = A * A * A / 8 - A * B / 2 + C;
-        var r = -3 * A * A * A * A / 256 + A * A * B / 16 - A * C / 4 + D;
+        var reAux = Math.sqrt(rho) * Math.cos(theta / 2);
+        var imAux = Math.sqrt(rho) * Math.sin(theta / 2);
 
-        //raiz da equação auxiliar
-        var u = cardanoRealPositive(1, 2 * p, p * p - 4 * r, -q * q);
-
-        //discriminantes
-        var delta1 = -u - 2 * p - 2 * q / Math.sqrt(u);
-        var delta2 = -u - 2 * p + 2 * q / Math.sqrt(u);
-
-        //adiciona as raízes à lista de resultados
-        if (delta1 >= 0) {
-            results.push((-A / 4 + Math.sqrt(u) / 2 + Math.sqrt(delta1) / 2).toString());
-            results.push((-A / 4 + Math.sqrt(u) / 2 - Math.sqrt(delta1) / 2).toString());
-        } else {
-            results.push(formatComplex(-A / 4 + Math.sqrt(u) / 2, Math.sqrt(Math.abs(delta1)) / 2));
-            results.push(formatComplex(-A / 4 + Math.sqrt(u) / 2, -Math.sqrt(Math.abs(delta1)) / 2));
-        }
-        if (delta2 >= 0) {
-            results.push((-A / 4 - Math.sqrt(u) / 2 + Math.sqrt(delta2) / 2).toString());
-            results.push((-A / 4 - Math.sqrt(u) / 2 - Math.sqrt(delta2) / 2).toString());
-        } else {
-            results.push(formatComplex(-A / 4 - Math.sqrt(u) / 2, Math.sqrt(Math.abs(delta2)) / 2));
-            results.push(formatComplex(-A / 4 - Math.sqrt(u) / 2, -Math.sqrt(Math.abs(delta2)) / 2));
-        }
+        results.push(formatComplex(reAux - subtract, imAux));
+        results.push(formatComplex(reAux - subtract, -imAux));
+        results.push(formatComplex(-reAux - subtract, imAux));
+        results.push(formatComplex(-reAux - subtract, -imAux));
     }
-    return results;    
+    return results;
 }
 
 /*
