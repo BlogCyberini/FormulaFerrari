@@ -24,7 +24,7 @@ public class Ferrari {
         if (a == 0) {
             throw new IllegalArgumentException("a == 0");
         }
-        //normaliza os cofiecintes
+        //normaliza os cofiecientes
         double A = b / a;
         double B = c / a;
         double C = d / a;
